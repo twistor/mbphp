@@ -45,13 +45,13 @@ class SingleByte implements Encoder
             $value = ord($string[$i]);
 
             if ($value < 0x80) {
-                $output[$i] = $value;
+                $output[] = $value;
             } else {
                 $value = $value ^ 0x80;
                 if (isset($index[$value])) {
-                    $output[$i] = $index[$value];
+                    $output[] = $index[$value];
                 } else {
-                    $output[$i] = 0xFFFD;
+                    $output[] = 0xFFFD;
                 }
             }
         }

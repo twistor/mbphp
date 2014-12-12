@@ -261,7 +261,11 @@ class Mb
      */
     public static function normalize($encoding)
     {
-        return preg_replace('/[^a-z0-9]/', '', strtolower($encoding));
+        $encoding = preg_replace('/[^a-z0-9]/', '', strtolower($encoding));
+        if (isset(static::$normalizations[$encoding])) {
+            return static::$normalizations[$encoding];
+        }
+        return $encoding;
     }
 
     protected static function getEncoder($encoding)
@@ -299,8 +303,6 @@ class Mb
         'gb18030'      => 'MbPhp\Encoder\Gb18030',
 
         'utf8'         => 'MbPhp\Encoder\Utf8',
-        'ascii'        => 'MbPhp\Encoder\Utf8',
-        'usascii'      => 'MbPhp\Encoder\Utf8',
 
         'ibm866'       => 'MbPhp\Encoder\SingleByte',
         'iso88592'     => 'MbPhp\Encoder\SingleByte',
@@ -328,5 +330,184 @@ class Mb
         'windows1256'  => 'MbPhp\Encoder\SingleByte',
         'windows1257'  => 'MbPhp\Encoder\SingleByte',
         'xmaccyrillic' => 'MbPhp\Encoder\SingleByte',
+    );
+
+    /**
+     * Normalizations.
+     *
+     * @var array
+     */
+    protected static $normalizations = array(
+        'unicode11utf8' => 'utf8',
+
+        '866' => 'ibm866',
+        'cp866' => 'ibm866',
+        'csibm866' => 'ibm866',
+
+        'csisolatin2' => 'iso88592',
+        'isoir101' => 'iso88592',
+        'iso885921987' => 'iso88592',
+        'l2' => 'iso88592',
+        'latin2' => 'iso88592',
+
+        'csisolatin3' => 'iso88593',
+        'isoir109' => 'iso88593',
+        'iso885931988' => 'iso88593',
+        'l3' => 'iso88593',
+        'latin3' => 'iso88593',
+
+        'csisolatin4' => 'iso88594',
+        'isoir110' => 'iso88594',
+        'iso885941988' => 'iso88594',
+        'l4' => 'iso88594',
+        'latin4' => 'iso88594',
+
+        'csisolatincyrillic' => 'iso88595',
+        'cyrillic' => 'iso88595',
+        'isoir144' => 'iso88595',
+        'iso885951988' => 'iso88595',
+
+        'arabic' => 'iso88596',
+        'asmo708' => 'iso88596',
+        'csiso88596e' => 'iso88596',
+        'csiso88596i' => 'iso88596',
+        'csisolatinarabic' => 'iso88596',
+        'ecma114' => 'iso88596',
+        'iso88596e' => 'iso88596',
+        'iso88596i' => 'iso88596',
+        'isoir127' => 'iso88596',
+        'iso885961987' => 'iso88596',
+
+        'csisolatingreek' => 'iso88597',
+        'ecma118' => 'iso88597',
+        'elot928' => 'iso88597',
+        'greek' => 'iso88597',
+        'greek8' => 'iso88597',
+        'isoir126' => 'iso88597',
+        'iso885971987' => 'iso88597',
+        'suneugreek' => 'iso88597',
+
+        'csiso88598e' => 'iso88598',
+        'csisolatinhebrew' => 'iso88598',
+        'hebrew' => 'iso88598',
+        'iso88598e' => 'iso88598',
+        'isoir138' => 'iso88598',
+        'iso885981988' => 'iso88598',
+        'visual' => 'iso88598',
+
+        'csiso88598i' => 'iso88598i',
+        'logical' => 'iso88598i',
+
+        'csisolatin6' => 'iso885910',
+        'isoir157' => 'iso885910',
+        'l6' => 'iso885910',
+        'latin6' => 'iso885910',
+
+        // 'iso885913' => 'iso885913',
+
+        // 'iso885914' => 'iso885914',
+
+        'csisolatin9' => 'iso885915',
+        'l9' => 'iso885915',
+
+        // 'iso885916' => 'iso-8859-16',
+
+        'cskoi8r' => 'koi8r',
+        'koi' => 'koi8r',
+        'koi8' => 'koi8r',
+
+        // 'koi8u' => 'koi8-u',
+
+        'csmacintosh' => 'macintosh',
+        'mac' => 'macintosh',
+        'xmacroman' => 'macintosh',
+
+        'dos874' => 'windows874',
+        'iso885911' => 'windows874',
+        'tis620' => 'windows874',
+
+        'cp1250' => 'windows1250',
+        'xcp1250' => 'windows1250',
+
+        'cp1251' => 'windows1251',
+        'xcp1251' => 'windows1251',
+
+        'ascii' => 'windows1252',
+        'usascii' => 'windows1252',
+        'ansix341968' => 'windows1252',
+        'cp1252' => 'windows1252',
+        'cp819' => 'windows1252',
+        'csisolatin1' => 'windows1252',
+        'ibm819' => 'windows1252',
+        'iso88591' => 'windows1252',
+        'isoir100' => 'windows1252',
+        'iso885911987' => 'windows1252',
+        'l1' => 'windows1252',
+        'latin1' => 'windows1252',
+        'xcp1252' => 'windows1252',
+
+        'cp1253' => 'windows1253',
+        'xcp1253' => 'windows1253',
+
+        'cp1254' => 'windows1254',
+        'csisolatin5' => 'windows1254',
+        'iso88599' => 'windows1254',
+        'isoir148' => 'windows1254',
+        'iso885991989' => 'windows1254',
+        'l5' => 'windows1254',
+        'latin5' => 'windows1254',
+        'xcp1254' => 'windows1254',
+
+        'cp1255' => 'windows1255',
+        'xcp1255' => 'windows1255',
+
+        'cp1256' => 'windows1256',
+        'xcp1256' => 'windows1256',
+
+        'cp1257' => 'windows1257',
+        'xcp1257' => 'windows1257',
+
+        'cp1258' => 'windows1258',
+        'xcp1258' => 'windows1258',
+
+        'xmacukrainian' => 'xmaccyrillic',
+
+        'chinese' => 'gbk',
+        'csgb2312' => 'gbk',
+        'csiso58gb231280' => 'gbk',
+        'gb2312' => 'gbk',
+        'gb231280' => 'gbk',
+        'isoir58' => 'gbk',
+        'xgbk' => 'gbk',
+
+        // 'gb18030' => 'gb18030',
+
+        'big5hkscs' => 'big5',
+        'cnbig5' => 'big5',
+        'csbig5' => 'big5',
+        'xxbig5' => 'big5',
+
+        'cseucpkdfmtjapanese' => 'eucjp',
+        'xeucjp' => 'eucjp',
+
+        'csiso2022jp' => 'iso2022jp',
+
+        'csshiftjis' => 'shiftjis',
+        'mskanji' => 'shiftjis',
+        'sjis' => 'shiftjis',
+        'windows31j' => 'shiftjis',
+        'xsjis' => 'shiftjis',
+
+        'cseuckr' => 'euckr',
+        'csksc56011987' => 'euckr',
+        'isoir149' => 'euckr',
+        'korean' => 'euckr',
+        'ksc56011987' => 'euckr',
+        'ksc5601' => 'euckr',
+        'windows949' => 'euckr',
+
+        'utf32' => 'utf32le',
+
+        // 'utf32be' => 'utf-32be',
     );
 }

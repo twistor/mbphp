@@ -36,9 +36,10 @@ class MbTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('utf8', Mb::internalEncoding());
 
         $this->assertTrue(Mb::internalEncoding('ascii'));
-        $this->assertSame('ascii', Mb::internalEncoding());
+        $this->assertSame('windows1252', Mb::internalEncoding());
 
         $this->assertFalse(Mb::internalEncoding('asdfasdf'));
+        $this->assertTrue(Mb::internalEncoding('utf-8'));
     }
 
     public function testStrlen()
@@ -94,7 +95,7 @@ class MbTest extends \PHPUnit_Framework_TestCase
     {
         $string = file_get_contents(dirname(dirname(__FILE__)).'/test-resources/utf-8.txt');
 
-        $this->assertSame(mb_substr($string, '5'), Mb::substr($string, 5));
+        $this->assertSame(mb_substr($string, 5), Mb::substr($string, 5));
     }
 
     public function testRegisterEncoder()
@@ -111,7 +112,7 @@ class MbTest extends \PHPUnit_Framework_TestCase
         $mbPhp = Mb::convertEncoding($string, 'utf-8', 'iso-8859-2');
         $this->assertSame($mb, $mbPhp);
 
-        // Test limited destincation encoding.
+        // Test limited destination encoding.
         $mb = mb_convert_encoding($string, 'iso-8859-2', 'utf-8');
         $mbPhp = Mb::convertEncoding($string, 'iso-8859-2', 'utf-8');
         $this->assertSame($mb, $mbPhp);
