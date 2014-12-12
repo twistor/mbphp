@@ -7,6 +7,8 @@
 
 namespace MbPhp;
 
+use MbPhp\Index;
+
 /**
  * mbstring compatible functions.
  */
@@ -160,6 +162,37 @@ class MbPhp {
     }
 
     /**
+     * Makes a string lowercase.
+     *
+     * @param string $string The string being lowercased.
+     * @param string $encoding The encoding character encoding. If it is omitted, the internal character encoding value will be used.
+     *
+     * @return string $string with all alphabetic characters converted to lowercase.
+     */
+    public static function strtolower($string, $encoding = null)
+    {
+        // @todo Figure out if we should cache this. Needs profiling include
+        // time vs. memory usage.
+        // @todo Handle special casing http://www.unicode.org/faq/casemap_charprop.html
+        $map = require Index::getPath().'/upper_to_lower.php';
+        return static::flipCase($string, $encoding, $map);
+    }
+
+    /**
+     * Makes a string uppercase.
+     *
+     * @param string $string The string being uppercased.
+     * @param string $encoding The encoding character encoding. If it is omitted, the internal character encoding value will be used.
+     *
+     * @return string $string with all alphabetic characters converted to uppercase.
+     */
+    public static function strtoupper($string, $encoding = null)
+    {
+        $map = require Index::getPath().'/lower_to_upper.php';
+        return static::flipCase($string, $encoding, $map);
+    }
+
+    /**
      * Counts the number of substring occurrences.
      *
      * @param string $haystack The string being checked.
@@ -218,6 +251,18 @@ class MbPhp {
         static::$encoderClass[static::normalize($encoding)] = $class;
     }
 
+    /**
+     * Normalizes an encoding.
+     *
+     * @param string $encoding The name of the encoding.
+     *
+     * @return string The normalized encoding.
+     */
+    public static function normalize($encoding)
+    {
+        return preg_replace('/[^a-z0-9]/', '', strtolower($encoding));
+    }
+
     protected static function getEncoder($encoding)
     {
         $encoding = static::normalize($encoding);
@@ -230,16 +275,23 @@ class MbPhp {
         return static::$encoders[$encoding];
     }
 
-    /**
-     * Normalizes an encoding.
-     *
-     * @param string $encoding The name of the encoding.
-     *
-     * @return string The normalized encoding.
-     */
-    public static function normalize($encoding)
+    protected static function flipCase($string, $encoding, array $map)
     {
-        return preg_replace('/[^a-z0-9]/', '', strtolower($encoding));
+        if ($encoding === null) {
+            $encoding = static::$internalEncoding;
+        }
+
+        $encoder = static::getEncoder($encoding);
+
+        $codepoints = $encoder->decode($string);
+
+        foreach ($codepoints as &$codepoint) {
+            if (isset($map[$codepoint])) {
+                $codepoint = $map[$codepoint];
+            }
+        }
+
+        return $encoder->decode($codepoints);
     }
 
     protected static $encoderClass = array(
