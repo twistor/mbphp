@@ -44,6 +44,12 @@ class MbPhpTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(mb_strlen($string, 'utf-8'), MbPhp::strlen($string));
     }
 
+    public function testStrpos()
+    {
+        $string = file_get_contents(dirname(dirname(__FILE__)).'/test-resources/utf-8.txt');
+        $this->assertSame(mb_strpos($string, '狗', 0, 'utf-8'), MbPhp::strpos($string, '狗', 0, 'utf-8'));
+    }
+
     public function testStrtolower()
     {
         $this->assertSame('abcd', MbPhp::strtolower('ABCD'));
