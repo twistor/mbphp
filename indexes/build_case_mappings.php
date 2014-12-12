@@ -31,8 +31,8 @@ $output = array();
 while ($line = fgets($handle)) {
     $parts = explode(';', $line);
 
-    if (strlen(trim($parts[14]))) {
-        $output[hexdec(trim($parts[0]))] = hexdec(trim($parts[14]));
+    if (strlen(trim($parts[12]))) {
+        $output[hexdec(trim($parts[0]))] = hexdec(trim($parts[12]));
     }
 }
 
