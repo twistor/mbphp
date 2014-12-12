@@ -60,7 +60,8 @@ class Gb18030 implements Encoder
                 if (($byte >= 0x40 && $byte <= 0x7E) || ($byte >= 0x80 && $byte <= 0xFE)) {
                     $pointer = ($lead - 0x81) * 190 + ($byte - $offset);
                 } else {
-                    throw new \InvalidArgumentException();
+                    $output[] = 63;
+                    return $output;
                 }
 
                 $output[] = $index[$pointer];
@@ -71,7 +72,7 @@ class Gb18030 implements Encoder
             } elseif ($byte >= 0x81 && $byte <= 0xFE) {
                 $first = $byte;
             } else {
-                throw new \InvalidArgumentException();
+                $output[] = 80;
             }
         }
 
