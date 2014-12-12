@@ -112,8 +112,8 @@ class MbPhp
 
         $haystackLen = count($haystack) - $needleLen + 1;
 
-        for ($i = 0; $i < $haystackLen; $i++) {
-            $section = array_slice($i, $needleLen);
+        for ($i = $offset; $i < $haystackLen; $i++) {
+            $section = array_slice($haystack, $i, $needleLen);
             if ($section === $needle) {
                 return $i;
             }
@@ -142,7 +142,7 @@ class MbPhp
             // @todo Test memory usage of array_reverse(). My thought is that
             // copying the array could be bad, but not sure. Walking the array
             // in reverse should be pretty performant.
-            for ($i = count($haystack) - 1; $i >= 0; $i--) {
+            for ($i = count($haystack) - 1 + $offset; $i >= 0; $i--) {
                 if ($haystack[$i] === $needle) {
                     return $i;
                 }
@@ -153,8 +153,8 @@ class MbPhp
 
         $haystackLen = count($haystack) - $needleLen + 1;
 
-        for ($i = $haystackLen; $i >= 0; $i--) {
-            $section = array_slice($i, $needleLen);
+        for ($i = $haystackLen + $offset; $i >= 0; $i--) {
+            $section = array_slice($haystack, $i, $needleLen);
             if ($section === $needle) {
                 return $i;
             }
@@ -214,7 +214,7 @@ class MbPhp
         $encoder = static::getEncoder($encoding);
 
         $haystack = $encoder->decode($haystack);
-        $needle = $encoding->decode($needle);
+        $needle = $encoder->decode($needle);
 
         $needleLen = count($needle);
 
@@ -228,7 +228,7 @@ class MbPhp
         $count = 0;
 
         for ($i = 0; $i < $haystackLen; $i++) {
-            $section = array_slice($i, $needleLen);
+            $section = array_slice($haystack, $i, $needleLen);
             if ($section === $needle) {
                 $count++;
             }
@@ -245,7 +245,7 @@ class MbPhp
 
         $encoder = static::getEncoder($encoding);
 
-        $codepoints = array_slice($encoder->decode($string), $strart, $length);
+        $codepoints = array_slice($encoder->decode($string), $start, $length);
 
         return $encoder->encode($codepoints);
     }

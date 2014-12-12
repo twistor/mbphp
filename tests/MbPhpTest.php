@@ -10,11 +10,10 @@ namespace MbPhp\Tests;
 use MbPhp\MbPhp;
 
 /**
- * @covers \MbPhp\MbPhp
  */
 class MbPhpTest extends \PHPUnit_Framework_TestCase
 {
-    public function textCheckEncoding()
+    public function testCheckEncoding()
     {
         $this->assertTrue(MbPhp::checkEncoding('敏捷的棕色狐狸跳過了懶狗', 'utf-8'));
     }
@@ -24,7 +23,10 @@ class MbPhpTest extends \PHPUnit_Framework_TestCase
         $string = file_get_contents(dirname(dirname(__FILE__)).'/test-resources/gb18030.txt');
         $actual = mb_convert_encoding($string, 'utf-8', 'gb18030');
 
-        $this->assertSame($actual, MbPhp::convertEncoding($string, 'utf-8', 'gb18030'));
+        $converted = MbPhp::convertEncoding($string, 'utf-8', 'gb18030');
+        $this->assertSame($actual, $converted);
+
+        $this->assertSame($string, MbPhp::convertEncoding($converted, 'gb18030'));
     }
 
     public function testInternalEncoding()
@@ -47,7 +49,26 @@ class MbPhpTest extends \PHPUnit_Framework_TestCase
     public function testStrpos()
     {
         $string = file_get_contents(dirname(dirname(__FILE__)).'/test-resources/utf-8.txt');
-        $this->assertSame(mb_strpos($string, '狗', 0, 'utf-8'), MbPhp::strpos($string, '狗', 0, 'utf-8'));
+        $this->assertSame(mb_strpos($string, '狗', 0, 'utf-8'), MbPhp::strpos($string, '狗'));
+
+        $this->assertSame(mb_strpos($string, 'のろ', 0, 'utf-8'), MbPhp::strpos($string, 'のろ'));
+        $this->assertSame(mb_strpos($string, 'のろ', 5, 'utf-8'), MbPhp::strpos($string, 'のろ', 5));
+
+
+        $this->assertFalse(MbPhp::strpos($string, '!!', 5));
+    }
+
+    public function testStrrpos()
+    {
+        $string = file_get_contents(dirname(dirname(__FILE__)).'/test-resources/utf-8.txt');
+        $this->assertSame(mb_strrpos($string, '狗', 0, 'utf-8'), MbPhp::strrpos($string, '狗'));
+
+        $this->assertSame(mb_strrpos($string, 'のろ', 0, 'utf-8'), MbPhp::strrpos($string, 'のろ'));
+        $this->assertSame(mb_strrpos($string, 'のろ', 5, 'utf-8'), MbPhp::strrpos($string, 'のろ', 5));
+
+
+        $this->assertFalse(MbPhp::strrpos($string, '!!'));
+        $this->assertFalse(MbPhp::strrpos($string, '!'));
     }
 
     public function testStrtolower()
@@ -58,5 +79,25 @@ class MbPhpTest extends \PHPUnit_Framework_TestCase
     public function testStrtoupper()
     {
         $this->assertSame('ABCD', MbPhp::strtoupper('abcd'));
+    }
+
+    public function testSubstrCount()
+    {
+        $string = file_get_contents(dirname(dirname(__FILE__)).'/test-resources/utf-8.txt');
+
+        $this->assertSame(mb_substr_count($string, '狗'), MbPhp::substrCount($string, '狗'));
+        $this->assertSame(mb_substr_count($string, 'のろ'), MbPhp::substrCount($string, 'のろ'));
+    }
+
+    public function testSubstr()
+    {
+        $string = file_get_contents(dirname(dirname(__FILE__)).'/test-resources/utf-8.txt');
+
+        $this->assertSame(mb_substr($string, '5'), MbPhp::substr($string, 5));
+    }
+
+    public function testRegisterEncoder()
+    {
+        MbPhp::registerEncoder('asfasf', 'MbPhp\Encoder\Noop');
     }
 }
