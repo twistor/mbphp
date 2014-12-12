@@ -21,7 +21,8 @@ class MbPhpTest extends \PHPUnit_Framework_TestCase
     public function testConvertEncoding()
     {
         $string = file_get_contents(dirname(dirname(__FILE__)).'/test-resources/ibm866.txt');
-        $actual = mb_convert_encoding($string, 'utf-8', 'ibm866');
+        // PHP 5.3 doesn't support ibm866 alias.
+        $actual = mb_convert_encoding($string, 'utf-8', 'cp866');
 
         $converted = MbPhp::convertEncoding($string, 'utf-8', 'ibm866');
         $this->assertSame($actual, $converted);
