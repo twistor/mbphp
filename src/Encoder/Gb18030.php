@@ -107,7 +107,7 @@ class Gb18030 implements Encoder
      */
     public function encode(array $codepoints)
     {
-        $ranges = require Index::getDir().'/index-gb18030-ranges.php';
+        $ranges = require Index::getDir().'/index-gb18030ranges.php';
         $ranges = array_flip($ranges);
         $index = array_flip(Index::get('gb18030'));
 
@@ -155,5 +155,21 @@ class Gb18030 implements Encoder
         }
 
         return $output;
+    }
+
+    protected function getRangesPointer(array $ranges, $codepoint)
+    {
+        $offset = $codepoint;
+
+        while ($offset) {
+            $pointerOffset = isset($ranges[$offset]) ? $ranges[$offset] : false;
+
+            if ($pointerOffset !== false) {
+                break;
+            }
+            $offset--;
+        }
+
+        return $pointerOffset + $codepoint - $offset;
     }
 }

@@ -23,7 +23,7 @@ class Noop implements Encoder
     /**
      * {@inheritdoc}
      */
-    public function encode($codepoints)
+    public function encode(array $codepoints)
     {
         return '';
     }

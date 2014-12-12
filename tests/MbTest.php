@@ -10,6 +10,7 @@ namespace MbPhp\Tests;
 use MbPhp\Mb;
 
 /**
+ * @covers \MbPhp\Mb
  */
 class MbTest extends \PHPUnit_Framework_TestCase
 {

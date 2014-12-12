@@ -2,28 +2,28 @@
 
 /**
  * @file
- * Contains \MbPhp\Tests\Utf8.
+ * Contains \MbPhp\Tests\Gb18030.
  */
 
 namespace MbPhp\Tests\Encoder;
 
-use MbPhp\Encoder\Utf8;
+use MbPhp\Encoder\Gb18030;
 
 /**
- * @covers \MbPhp\Encoder\Utf8
+ * @covers \MbPhp\Encoder\Gb18030
  */
-class Utf8Test extends \PHPUnit_Framework_TestCase
+class Gb18030Test extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider stringProvider
      */
     public function testEncode($string)
     {
-        $encoder = new Utf8();
+        $encoder = new Gb18030();
         $codepoints = $encoder->decode($string);
 
-        $this->assertSame(mb_strlen($string, 'utf-8'), count($codepoints));
-        $this->assertSame(mb_convert_encoding($string, 'utf-8', 'utf-8'), $encoder->encode($codepoints));
+        $this->assertSame(mb_strlen($string, 'gb18030'), count($codepoints));
+        $this->assertSame(mb_convert_encoding($string, 'gb18030', 'gb18030'), $encoder->encode($codepoints));
     }
 
     /**
@@ -31,10 +31,11 @@ class Utf8Test extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidEncode($string)
     {
-        $encoder = new Utf8();
+        $encoder = new Gb18030();
         $codepoints = $encoder->decode($string);
 
-        $this->assertSame(mb_strlen($string, 'utf-8'), count($codepoints));
+        $this->assertSame(mb_strlen($string, 'gb18030'), count($codepoints));
+        // $this->assertSame(mb_convert_encoding($string, 'gb18030', 'gb18030'), $encoder->encode($codepoints));
     }
 
     public function stringProvider()
@@ -43,10 +44,10 @@ class Utf8Test extends \PHPUnit_Framework_TestCase
         $encodings = array(
             'utf-8',
             // 'euc-jp',
-            'ibm866',
+            // 'ibm866',
             // 'koi8-r',
-            'ibm866',
-            // 'gb18030',
+            // 'ibm866',
+            'gb18030',
         );
 
         $out = array();
@@ -61,10 +62,10 @@ class Utf8Test extends \PHPUnit_Framework_TestCase
     {
         $path = dirname(dirname(dirname(__FILE__))).'/test-resources/';
         $encodings = array(
-            // 'euc-jp',
+            'euc-jp',
+            'ibm866',
             'koi8-r',
             'ibm866',
-            // 'gb18030',
         );
 
         $out = array();

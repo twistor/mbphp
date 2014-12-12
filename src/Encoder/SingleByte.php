@@ -51,7 +51,7 @@ class SingleByte implements Encoder
                 if (isset($index[$value])) {
                     $output[] = $index[$value];
                 } else {
-                    $output[] = 0xFFFD;
+                    $output[] = 63;
                 }
             }
         }
