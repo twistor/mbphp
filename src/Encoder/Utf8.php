@@ -10,12 +10,12 @@ namespace MbPhp\Encoder;
 /**
  * Encoder for utf-8.
  */
-class Utf8
+class Utf8 implements Encoder
 {
     /**
      * {@inheritdoc}
      */
-    public function decode($string, $encoding)
+    public function decode($string)
     {
         $len = strlen($string);
         $output = array();
@@ -96,7 +96,7 @@ class Utf8
     /**
      * {@inheritdoc}
      */
-    public function encode($codepoints, $encoding)
+    public function encode(array $codepoints)
     {
         $output = '';
         foreach ($codepoints as $codepoint) {

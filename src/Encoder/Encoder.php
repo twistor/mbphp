@@ -28,5 +28,5 @@ interface Encoder
      *
      * @return string An encoded string.
      */
-    public function encode($codepoints);
+    public function encode(array $codepoints);
 }

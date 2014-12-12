@@ -7,13 +7,12 @@
 
 namespace MbPhp;
 
-use MbPhp\Index;
 
 /**
  * mbstring compatible functions.
  */
-class MbPhp {
-
+class MbPhp
+{
     /**
      * A static cache of encoders keyed by encoding.
      *
@@ -26,12 +25,12 @@ class MbPhp {
      *
      * @var string
      */
-    protected static $internalEncoding;
+    protected static $internalEncoding = 'utf8';
 
     /**
      * Checks if the string is valid for the specified encoding.
      *
-     * @param string $string The byte stream to check.
+     * @param string $string   The byte stream to check.
      * @param string $encoding The expected encoding.
      *
      * @return bool Returns true on success or false on failure.
@@ -44,8 +43,8 @@ class MbPhp {
     /**
      * Converts character encoding.
      *
-     * @param string $string The string being encoded.
-     * @param string $to_encoding The type of encoding that string is being converted to.
+     * @param string $string        The string being encoded.
+     * @param string $to_encoding   The type of encoding that string is being converted to.
      * @param string $from_encoding If from_encoding is not specified, the internal encoding will be used.
      *
      * @return string The encoded string.
@@ -57,6 +56,7 @@ class MbPhp {
         }
 
         $codepoints = static::getEncoder($from_encoding)->decode($string);
+
         return static::getEncoder($to_encoding)->encode($codepoints);
     }
 
@@ -77,8 +77,10 @@ class MbPhp {
 
         if (isset(static::$encoderClass[$encoding])) {
             static::$internalEncoding = $encoding;
-            return true
+
+            return true;
         }
+
         return false;
     }
 
@@ -146,6 +148,7 @@ class MbPhp {
                     return $i;
                 }
             }
+
             return false;
         }
 
@@ -164,7 +167,7 @@ class MbPhp {
     /**
      * Makes a string lowercase.
      *
-     * @param string $string The string being lowercased.
+     * @param string $string   The string being lowercased.
      * @param string $encoding The encoding character encoding. If it is omitted, the internal character encoding value will be used.
      *
      * @return string $string with all alphabetic characters converted to lowercase.
@@ -174,21 +177,23 @@ class MbPhp {
         // @todo Figure out if we should cache this. Needs profiling include
         // time vs. memory usage.
         // @todo Handle special casing http://www.unicode.org/faq/casemap_charprop.html
-        $map = require Index::getPath().'/upper_to_lower.php';
+        $map = require Index::getDir().'/upper_to_lower.php';
+
         return static::flipCase($string, $encoding, $map);
     }
 
     /**
      * Makes a string uppercase.
      *
-     * @param string $string The string being uppercased.
+     * @param string $string   The string being uppercased.
      * @param string $encoding The encoding character encoding. If it is omitted, the internal character encoding value will be used.
      *
      * @return string $string with all alphabetic characters converted to uppercase.
      */
     public static function strtoupper($string, $encoding = null)
     {
-        $map = require Index::getPath().'/lower_to_upper.php';
+        $map = require Index::getDir().'/lower_to_upper.php';
+
         return static::flipCase($string, $encoding, $map);
     }
 
@@ -196,7 +201,7 @@ class MbPhp {
      * Counts the number of substring occurrences.
      *
      * @param string $haystack The string being checked.
-     * @param string $needle The string being found.
+     * @param string $needle   The string being found.
      * @param string $encoding The encoding parameter is the character encoding. If it is omitted, the internal character encoding value will be used.
      *
      * @return int The number of times the needle substring occurs in the haystack string.
@@ -291,7 +296,7 @@ class MbPhp {
             }
         }
 
-        return $encoder->decode($codepoints);
+        return $encoder->encode($codepoints);
     }
 
     protected static $encoderClass = array(

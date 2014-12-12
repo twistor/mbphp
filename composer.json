@@ -1,0 +1,14 @@
+{
+    "name": "twistor/mbphp",
+    "type": "library",
+    "description": "",
+    "require": {
+        "php": ">=5.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "MbPhp\\": "src/",
+            "MbPhp\\Tests\\": "tests/"
+        }
+    }
+}
