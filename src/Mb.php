@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \MbPhp\MbPhp.
+ * Contains \MbPhp\Mb.
  */
 
 namespace MbPhp;
@@ -10,7 +10,7 @@ namespace MbPhp;
 /**
  * mbstring compatible functions.
  */
-class MbPhp
+class Mb
 {
     /**
      * A static cache of encoders keyed by encoding.
@@ -113,8 +113,7 @@ class MbPhp
         $haystackLen = count($haystack) - $needleLen + 1;
 
         for ($i = $offset; $i < $haystackLen; $i++) {
-            $section = array_slice($haystack, $i, $needleLen);
-            if ($section === $needle) {
+            if (array_slice($haystack, $i, $needleLen) === $needle) {
                 return $i;
             }
         }
@@ -154,8 +153,7 @@ class MbPhp
         $haystackLen = count($haystack) - $needleLen + 1;
 
         for ($i = $haystackLen + $offset; $i >= 0; $i--) {
-            $section = array_slice($haystack, $i, $needleLen);
-            if ($section === $needle) {
+            if (array_slice($haystack, $i, $needleLen) === $needle) {
                 return $i;
             }
         }
@@ -167,7 +165,7 @@ class MbPhp
      * Makes a string lowercase.
      *
      * @param string $string   The string being lowercased.
-     * @param string $encoding The encoding character encoding. If it is omitted, the internal character encoding value will be used.
+     * @param string $encoding The character encoding. Defaults to the internal encoding.
      *
      * @return string $string with all alphabetic characters converted to lowercase.
      */
@@ -185,7 +183,7 @@ class MbPhp
      * Makes a string uppercase.
      *
      * @param string $string   The string being uppercased.
-     * @param string $encoding The encoding character encoding. If it is omitted, the internal character encoding value will be used.
+     * @param string $encoding The character encoding. Defaults to the internal encoding.
      *
      * @return string $string with all alphabetic characters converted to uppercase.
      */
@@ -201,7 +199,7 @@ class MbPhp
      *
      * @param string $haystack The string being checked.
      * @param string $needle   The string being found.
-     * @param string $encoding The encoding parameter is the character encoding. If it is omitted, the internal character encoding value will be used.
+     * @param string $encoding The character encoding. Defaults to the internal encoding.
      *
      * @return int The number of times the needle substring occurs in the haystack string.
      */
@@ -228,8 +226,7 @@ class MbPhp
         $count = 0;
 
         for ($i = 0; $i < $haystackLen; $i++) {
-            $section = array_slice($haystack, $i, $needleLen);
-            if ($section === $needle) {
+            if (array_slice($haystack, $i, $needleLen) === $needle) {
                 $count++;
             }
         }
