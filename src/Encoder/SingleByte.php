@@ -39,11 +39,7 @@ class SingleByte implements Encoder
         $index = Index::get($this->encoding);
         $len = strlen($string);
 
-        if (class_exists('\SplFixedArray', false)) {
-            $output = new \SplFixedArray($len);
-        } else {
-            $output = array();
-        }
+        $output = array();
 
         for ($i = 0; $i < $len; $i++) {
             $value = ord($string[$i]);

@@ -12,19 +12,36 @@ namespace MbPhp;
  */
 class MbPhp {
 
+    /**
+     * A static cache of encoders keyed by encoding.
+     *
+     * @var \MbPhp\Encoder\Encoder[]
+     */
     protected static $encoders = array();
 
+    /**
+     * The default encoding to use.
+     *
+     * @var string
+     */
     protected static $internalEncoding;
 
+    /**
+     * Checks if the string is valid for the specified encoding.
+     *
+     * @param string $string The byte stream to check.
+     * @param string $encoding The expected encoding.
+     *
+     * @return bool Returns true on success or false on failure.
+     */
     public static function checkEncoding($string, $encoding = null)
     {
-        if ($encoding === null) {
-            $encoding = static::$internalEncoding;
-        }
         return $string === static::convertEncoding($string, $encoding, $encoding);
     }
 
     /**
+     * Converts character encoding.
+     *
      * @param string $string The string being encoded.
      * @param string $to_encoding The type of encoding that string is being converted to.
      * @param string $from_encoding If from_encoding is not specified, the internal encoding will be used.
@@ -37,14 +54,14 @@ class MbPhp {
             $from_encoding = static::$internalEncoding;
         }
 
-        $codepoints = static::getEncoder($from_encoding)->deocde($string);
+        $codepoints = static::getEncoder($from_encoding)->decode($string);
         return static::getEncoder($to_encoding)->encode($codepoints);
     }
 
     /**
      * Sets/Gets internal character encoding.
      *
-     * @param string $encoding The default character encoding for string functions
+     * @param string $encoding The default character encoding for string functions.
      *
      * @return bool|string
      */
@@ -69,8 +86,7 @@ class MbPhp {
             $encoding = static::$internalEncoding;
         }
 
-        $codepoints = static::getEncoder($encoding)->deocde($string);
-        return count($codepoints);
+        return count(static::getEncoder($encoding)->decode($string));
     }
 
     public static function strpos($haystack, $needle, $offset = 0, $encoding = null)
@@ -79,12 +95,19 @@ class MbPhp {
             $encoding = static::$internalEncoding;
         }
 
-        $haystack = static::getEncoder($encoding)->deocde($haystack);
-        $needle = static::getEncoder($encoding)->deocde($needle);
+        $encoder = static::getEncoder($encoding);
+
+        $haystack = $encoder->decode($haystack);
+        $needle = $encoder->decode($needle);
 
         $needleLen = count($needle);
-        $haystackLen = count($haystack);
-        $haystackLen = $haystack - ($haystack % $needleLen);
+
+        // Optimize for when $needle is a single character.
+        if ($needleLen === 1) {
+            return array_search($needle[0], $haystack, true);
+        }
+
+        $haystackLen = count($haystack) - $needleLen + 1;
 
         for ($i = 0; $i < $haystackLen; $i++) {
             $section = array_slice($i, $needleLen);
@@ -102,12 +125,29 @@ class MbPhp {
             $encoding = static::$internalEncoding;
         }
 
-        $haystack = static::getEncoder($encoding)->deocde($haystack);
-        $needle = static::getEncoder($encoding)->deocde($needle);
+        $encoder = static::getEncoder($encoding);
+
+        $haystack = $encoder->decode($haystack);
+        $needle = $encoder->decode($needle);
 
         $needleLen = count($needle);
-        $haystackLen = count($haystack);
-        $haystackLen = $haystack - ($haystack % $needleLen);
+
+        // Optimize for when $needle is a single character.
+        if ($needleLen === 1) {
+            $needle = $needle[0];
+
+            // @todo Test memory usage of array_reverse(). My thought is that
+            // copying the array could be bad, but not sure. Walking the array
+            // in reverse should be pretty performant.
+            for ($i = count($haystack) - 1; $i >= 0; $i--) {
+                if ($haystack[$i] === $needle) {
+                    return $i;
+                }
+            }
+            return false;
+        }
+
+        $haystackLen = count($haystack) - $needleLen + 1;
 
         for ($i = $haystackLen; $i >= 0; $i--) {
             $section = array_slice($i, $needleLen);
@@ -135,12 +175,18 @@ class MbPhp {
         }
 
         $encoder = static::getEncoder($encoding);
-        $haystack = $encoder->deocde($haystack);
-        $needle = $encoding->deocde($needle);
+
+        $haystack = $encoder->decode($haystack);
+        $needle = $encoding->decode($needle);
 
         $needleLen = count($needle);
-        $haystackLen = count($haystack);
-        $haystackLen = $haystack - ($haystack % $needleLen);
+
+        // Optimize the case when needle is one character.
+        if ($needleLen === 1) {
+            return count(array_keys($haystack, $needle[0], true));
+        }
+
+        $haystackLen = count($haystack) - $needleLen + 1;
 
         $count = 0;
 
@@ -162,8 +208,7 @@ class MbPhp {
 
         $encoder = static::getEncoder($encoding);
 
-        $codepoints = $encoder->deocde($string);
-        $codepoints = array_slice($codepoints, $strart, $length);
+        $codepoints = array_slice($encoder->decode($string), $strart, $length);
 
         return $encoder->encode($codepoints);
     }

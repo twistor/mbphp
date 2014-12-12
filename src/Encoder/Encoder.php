@@ -17,14 +17,14 @@ interface Encoder
      *
      * @param string string An encoded string.
      *
-     * @return array|\Traversable A list of codepoints.
+     * @return array A list of codepoints.
      */
     public function decode($string);
 
     /**
      * Encodes a list of codepoints.
      *
-     * @param array|\Traversable A list of codepoints.
+     * @param array A list of codepoints.
      *
      * @return string An encoded string.
      */
