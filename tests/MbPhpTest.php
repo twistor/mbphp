@@ -20,13 +20,13 @@ class MbPhpTest extends \PHPUnit_Framework_TestCase
 
     public function testConvertEncoding()
     {
-        $string = file_get_contents(dirname(dirname(__FILE__)).'/test-resources/gb18030.txt');
-        $actual = mb_convert_encoding($string, 'utf-8', 'gb18030');
+        $string = file_get_contents(dirname(dirname(__FILE__)).'/test-resources/ibm866.txt');
+        $actual = mb_convert_encoding($string, 'utf-8', 'ibm866');
 
-        $converted = MbPhp::convertEncoding($string, 'utf-8', 'gb18030');
+        $converted = MbPhp::convertEncoding($string, 'utf-8', 'ibm866');
         $this->assertSame($actual, $converted);
 
-        $this->assertSame($string, MbPhp::convertEncoding($converted, 'gb18030'));
+        $this->assertSame($string, MbPhp::convertEncoding($converted, 'ibm866'));
     }
 
     public function testInternalEncoding()

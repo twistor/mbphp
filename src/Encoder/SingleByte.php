@@ -62,7 +62,7 @@ class SingleByte implements Encoder
     /**
      * {@inheritdoc}
      */
-    public function encode($codepoints)
+    public function encode(array $codepoints)
     {
         $index = array_flip(Index::get($this->encoding));
 
