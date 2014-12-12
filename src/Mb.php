@@ -262,6 +262,7 @@ class Mb
     public static function normalize($encoding)
     {
         $encoding = preg_replace('/[^a-z0-9]/', '', strtolower($encoding));
+
         if (isset(static::$normalizations[$encoding])) {
             return static::$normalizations[$encoding];
         }

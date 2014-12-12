@@ -19,92 +19,66 @@ class Utf8 implements Encoder
     {
         $len = strlen($string);
         $output = array();
+        $seen = $needed = 0;
+        $lower = 0x80;
+        $upper = 0xBF;
 
         for ($i = 0; $i < $len; $i++) {
-            $byte = ord($string[$i]) & 0xFF;
+            $byte = ord($string[$i]);
 
-            // Zero continuation (0 to 127).
-            if (($byte & 0x80) === 0) {
-                $output[] = $byte;
-            }
-
-            // One continuation (128 to 2047).
-            elseif (($byte & 0xE0) === 0xC0) {
-                try {
-                    $next = $this->getChar($string, ++$i);
-                } catch (\InvalidArgumentException $e) {
-                    $output[] = 0xFFFD;
+            if ($needed === 0) {
+                if ($byte >= 0x00 && $byte <= 0x7F) {
+                    $output[] = $byte;
+                    continue;
+                } elseif ($byte >= 0xC2 && $byte <= 0xDF) {
+                    $needed = 1;
+                    $codepoint = $byte - 0xC0;
+                } elseif ($byte >= 0xE0 && $byte <= 0xEF) {
+                    if ($byte === 0xE0) {
+                        $lower = 0xA0;
+                    } elseif ($byte === 0xED) {
+                        $upper = 0x9F;
+                    }
+                    $needed = 2;
+                    $codepoint = $byte - 0xE0;
+                } elseif ($byte >= 0xF0 && $byte <= 0xF4) {
+                    if ($byte === 0xF0) {
+                        $lower = 0x90;
+                    } elseif ($byte === 0xF4) {
+                        $upper = 0x8F;
+                    }
+                    $needed = 3;
+                    $codepoint = $byte - 0xF0;
+                } else {
+                    // Returns ord('?');
+                    $output[] = 63;
+                    $codepoint = $needed = $seen = 0;
                     continue;
                 }
-
-                $return = (($byte & 0x1F) << 6) | $next;
-                if ($return >= 128) {
-                    $output[] = $return;
-                } else {
-                    $output[] = 0xFFFD;
-                }
+                $codepoint = $codepoint <<  (6 * $needed);
+                continue;
             }
 
-            // Two continuation (2048 to 55295 and 57344 to 65535).
-            elseif (($byte & 0xF0) === 0xE0) {
-                try {
-                    $next1 = $this->getChar($string, ++$i);
-                    $next2 = $this->getChar($string, ++$i);
-                } catch (\InvalidArgumentException $e) {
-                    $output[] = 0xFFFD;
-                    continue;
-                }
-                $return = (($byte & 0x0F) << 12) | ($next1 << 6) | $next2;
-
-                if (($return > 2047 && $return < 55296) || ($return > 57343 && $return < 65536)) {
-                    $output[] = $return;
-                } else {
-                    $output[] = 0xFFFD;
-                }
+            if ($byte < $lower || $byte > $upper) {
+                // Returns ord('?');
+                $output[] = 63;
+                $codepoint = $needed = $seen = 0;
+                continue;
             }
 
-            // Three continuation (65536 to 1114111).
-            elseif (($byte & 0xF8) === 0xF0) {
-                try {
-                    $next1 = $this->getChar($string, ++$i);
-                    $next2 = $this->getChar($string, ++$i);
-                    $next3 = $this->getChar($string, ++$i);
-                } catch (\InvalidArgumentException $e) {
-                    $output[] = 0xFFFD;
-                    continue;
-                }
+            $lower = 0x80;
+            $upper = 0xBF;
+            $seen++;
+            $codepoint = $codepoint + (($byte - 0x80) << (6 * ($needed - $seen)));
 
-                $return = (($byte & 0x0F) << 18) | ($next1 << 12) | ($next2 << 6) | $next3;
-                if ($return >= 65536 && $return <= 1114111) {
-                    $output[] = $return;
-                } else {
-                    $output[] = 0xFFFD;
-                }
+            if ($seen !== $needed) {
+                continue;
             }
+            $output[] = $codepoint;
+            $codepoint = $needed = $seen = 0;
         }
 
         return $output;
-    }
-
-    /**
-     * Returns the character at a given index.
-     *
-     * @param string $string The string being decoded.
-     * @param int    $index  The position in the string.
-     *
-     * @return int The byte character at the given position.
-     */
-    protected function getChar($string, $index)
-    {
-        $char = isset($string[$index]) ? ord($string[$index]) & 0xFF : false;
-        if ($char === false) {
-            throw new \InvalidArgumentException();
-        }
-
-        if (($char & 0xC0) === 0x80) {
-            return $char & 0x3F;
-        }
-        throw new \InvalidArgumentException();
     }
 
     /**
