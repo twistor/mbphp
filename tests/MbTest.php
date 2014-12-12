@@ -101,4 +101,20 @@ class MbTest extends \PHPUnit_Framework_TestCase
     {
         Mb::registerEncoder('asfasf', 'MbPhp\Encoder\Noop');
     }
+
+    public function testMbTing()
+    {
+        $string = file_get_contents(dirname(dirname(__FILE__)).'/test-resources/utf-8.txt');
+
+        // Test invalid source encoding.
+        $mb = mb_convert_encoding($string, 'utf-8', 'iso-8859-2');
+        $mbPhp = Mb::convertEncoding($string, 'utf-8', 'iso-8859-2');
+        $this->assertSame($mb, $mbPhp);
+
+        // Test limited destincation encoding.
+        $mb = mb_convert_encoding($string, 'iso-8859-2', 'utf-8');
+        $mbPhp = Mb::convertEncoding($string, 'iso-8859-2', 'utf-8');
+        $this->assertSame($mb, $mbPhp);
+
+    }
 }

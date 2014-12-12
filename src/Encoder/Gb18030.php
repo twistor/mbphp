@@ -20,7 +20,7 @@ class Gb18030 implements Encoder
     public function decode($string)
     {
         // Load the range index.
-        $ranges = require Index::getDir().'/index-gb18030-ranges.php';
+        $ranges = require Index::getDir().'/index-gb18030ranges.php';
 
         // Load the normal index.
         $index = Index::get('gb18030');

@@ -30,41 +30,55 @@ class Utf8 implements Encoder
 
             // One continuation (128 to 2047).
             elseif (($byte & 0xE0) === 0xC0) {
-                $next = $this->getChar($string, ++$i);
+                try {
+                    $next = $this->getChar($string, ++$i);
+                } catch (\InvalidArgumentException $e) {
+                    $output[] = 0xFFFD;
+                    continue;
+                }
 
                 $return = (($byte & 0x1F) << 6) | $next;
                 if ($return >= 128) {
                     $output[] = $return;
                 } else {
-                    throw new \InvalidArgumentException();
+                    $output[] = 0xFFFD;
                 }
             }
 
             // Two continuation (2048 to 55295 and 57344 to 65535).
             elseif (($byte & 0xF0) === 0xE0) {
-                $next1 = $this->getChar($string, ++$i);
-                $next2 = $this->getChar($string, ++$i);
-
+                try {
+                    $next1 = $this->getChar($string, ++$i);
+                    $next2 = $this->getChar($string, ++$i);
+                } catch (\InvalidArgumentException $e) {
+                    $output[] = 0xFFFD;
+                    continue;
+                }
                 $return = (($byte & 0x0F) << 12) | ($next1 << 6) | $next2;
 
                 if (($return > 2047 && $return < 55296) || ($return > 57343 && $return < 65536)) {
                     $output[] = $return;
                 } else {
-                    throw new \InvalidArgumentException();
+                    $output[] = 0xFFFD;
                 }
             }
 
             // Three continuation (65536 to 1114111).
             elseif (($byte & 0xF8) === 0xF0) {
-                $next1 = $this->getChar($string, ++$i);
-                $next2 = $this->getChar($string, ++$i);
-                $next3 = $this->getChar($string, ++$i);
+                try {
+                    $next1 = $this->getChar($string, ++$i);
+                    $next2 = $this->getChar($string, ++$i);
+                    $next3 = $this->getChar($string, ++$i);
+                } catch (\InvalidArgumentException $e) {
+                    $output[] = 0xFFFD;
+                    continue;
+                }
 
                 $return = (($byte & 0x0F) << 18) | ($next1 << 12) | ($next2 << 6) | $next3;
                 if ($return >= 65536 && $return <= 1114111) {
                     $output[] = $return;
                 } else {
-                    throw new \InvalidArgumentException();
+                    $output[] = 0xFFFD;
                 }
             }
         }
@@ -115,7 +129,9 @@ class Utf8 implements Encoder
                 $count = 3;
                 $offset = 0xF0;
             } else {
-                throw new \InvalidArgumentException();
+                $count = 3;
+                $offset = 0xF0;
+                $codepoint = 0xFFFD;
             }
 
             $output .= chr(($codepoint >> (6 * $count)) + $offset);

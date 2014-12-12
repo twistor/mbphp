@@ -36,7 +36,14 @@ while ($line = fgets($handle)) {
 }
 
 $filename = basename($url);
-$filename = dirname(__FILE__) .'/'.substr($filename, 0, strrpos($filename, '.')).'.php';
+$filename = substr($filename, 0, strrpos($filename, '.')).'.php';
+
+// Convert index-iso-8859-7.php to index-iso88597.php
+$parts = explode('-', $filename, 2);
+$parts[1] = str_replace('-', '', $parts[1]);
+$filename = implode('-', $parts);
+
+$filename = dirname(__FILE__) .'/'.$filename;
 
 $comment = <<<COM
 

@@ -51,7 +51,7 @@ class SingleByte implements Encoder
                 if (isset($index[$value])) {
                     $output[$i] = $index[$value];
                 } else {
-                    throw new \InvalidArgumentException();
+                    $output[$i] = 0xFFFD;
                 }
             }
         }
@@ -73,7 +73,7 @@ class SingleByte implements Encoder
             } elseif (isset($index[$token])) {
                 $output .= chr(0x80 | $index[$token]);
             } else {
-                throw new \InvalidArgumentException();
+                $output .= '?';
             }
         }
 
