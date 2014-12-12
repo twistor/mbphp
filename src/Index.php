@@ -21,7 +21,7 @@ class Index
      */
     public static function get($encoding)
     {
-        return require static::getIndexDir().'/index-'.$encoding.'.txt';
+        return require static::getDir().'/index-'.$encoding.'.php';
     }
 
     public static function getDir()

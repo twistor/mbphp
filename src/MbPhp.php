@@ -7,7 +7,6 @@
 
 namespace MbPhp;
 
-
 /**
  * mbstring compatible functions.
  */
@@ -301,7 +300,10 @@ class MbPhp
 
     protected static $encoderClass = array(
         'gb18030'      => 'MbPhp\Encoder\Gb18030',
+
         'utf8'         => 'MbPhp\Encoder\Utf8',
+        'ascii'        => 'MbPhp\Encoder\Utf8',
+        'usascii'      => 'MbPhp\Encoder\Utf8',
 
         'ibm866'       => 'MbPhp\Encoder\SingleByte',
         'iso88592'     => 'MbPhp\Encoder\SingleByte',
