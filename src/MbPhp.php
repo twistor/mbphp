@@ -44,7 +44,7 @@ class MbPhp {
     /**
      * Sets/Gets internal character encoding.
      *
-     * @param strin $encoding The default character encoding for string functions
+     * @param string $encoding The default character encoding for string functions
      *
      * @return bool|string
      */
@@ -52,11 +52,15 @@ class MbPhp {
     {
         if ($encoding === null) {
             return static::$internalEncoding;
-        } else {
-            $encoding = static::normalize($encoding);
-            return isset() ? static::$internalEncoding = $encoding;
         }
-        return true;
+
+        $encoding = static::normalize($encoding);
+
+        if (isset(static::$encoderClass[$encoding])) {
+            static::$internalEncoding = $encoding;
+            return true
+        }
+        return false;
     }
 
     public static function strlen($string, $encoding = null)
