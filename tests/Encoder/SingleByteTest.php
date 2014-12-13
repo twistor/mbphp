@@ -36,7 +36,6 @@ class SingleByteTest extends \PHPUnit_Framework_TestCase
             'utf-8' => 'iso-8859-2',
             // 'utf-8' => 'ascii',
             'gb18030' => 'iso-8859-2',
-            'gb18030' => 'ibm866',
             'euc-jp' => 'iso-8859-2',
             'euc-jp' => 'koi8r',
             // 'euc-jp' => 'ascii',
@@ -50,6 +49,7 @@ class SingleByteTest extends \PHPUnit_Framework_TestCase
 
         if (version_compare(phpversion(), '5.4', '>=')) {
           $out[] = array(file_get_contents($path.'ibm866.txt'), 'ibm866');
+          $out[] = array(file_get_contents($path.'gb18030.txt'), 'ibm866');
         }
 
         return $out;
