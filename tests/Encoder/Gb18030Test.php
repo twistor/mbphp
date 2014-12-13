@@ -22,8 +22,10 @@ class Gb18030Test extends \PHPUnit_Framework_TestCase
         $encoder = new Gb18030();
         $codepoints = $encoder->decode($string);
 
-        $this->assertSame(mb_strlen($string, 'gb18030'), count($codepoints));
-        $this->assertSame(mb_convert_encoding($string, 'gb18030', 'gb18030'), $encoder->encode($codepoints));
+        if (version_compare(phpversion(), '5.4', '>=')) {
+          $this->assertSame(mb_strlen($string, 'gb18030'), count($codepoints));
+          $this->assertSame(mb_convert_encoding($string, 'gb18030', 'gb18030'), $encoder->encode($codepoints));
+        }
     }
 
     /**
@@ -34,8 +36,9 @@ class Gb18030Test extends \PHPUnit_Framework_TestCase
         $encoder = new Gb18030();
         $codepoints = $encoder->decode($string);
 
-        $this->assertSame(mb_strlen($string, 'gb18030'), count($codepoints));
-        // $this->assertSame(mb_convert_encoding($string, 'gb18030', 'gb18030'), $encoder->encode($codepoints));
+        if (version_compare(phpversion(), '5.4', '>=')) {
+          $this->assertSame(mb_strlen($string, 'gb18030'), count($codepoints));
+        }
     }
 
     public function stringProvider()
