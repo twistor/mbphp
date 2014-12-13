@@ -45,13 +45,16 @@ class Utf8Test extends \PHPUnit_Framework_TestCase
             // 'euc-jp',
             'ibm866',
             // 'koi8-r',
-            'ibm866',
             // 'gb18030',
         );
 
         $out = array();
         foreach ($encodings as $encoding) {
             $out[] = array(file_get_contents($path.$encoding.'.txt'));
+        }
+
+        if (version_compare(phpversion(), '5.4', '>=')) {
+          $out[] = array(file_get_contents($path.'ibm866.txt'));
         }
 
         return $out;
